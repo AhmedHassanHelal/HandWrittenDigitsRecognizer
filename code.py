@@ -10,7 +10,6 @@ images_train_orig, labels_train_orig = mndata.load_training()
 images_test, labels_test_orig = mndata.load_testing()
 
 X_train = np.asarray(images_train_orig).T
-print(X_train.shape)
 Y_ORIG_train = np.asarray(labels_train_orig)
 Y_ORIG_train = Y_ORIG_train.reshape((Y_ORIG_train.shape[0], 1))
 X_test = np.asarray(images_test).T
@@ -61,21 +60,24 @@ def propagate(w, b, X, Y):
     ### START CODE HERE ### (≈ 2 lines of code)
     Z = np.dot(w.T, X)+b
     A = sigmoid(Z)                            	        # compute activation
-    cost = None                                		# compute cost
+    cost = (- 1 / m) * np.sum(Y * np.log(A) + (1 - Y) * (np.log(1 - A)), axis = 1)
+print(cost.shape)                                		# compute cost
     ### END CODE HERE ###
     
     # BACKWARD PROPAGATION (TO FIND GRAD)
     ### START CODE HERE ### (≈ 2 lines of code)
-    dw = None
-    db = None
+
+    dw = (1 / m) * np.dot(X, (A - Y).T)
+    print(dw.shape)
+    db = (1 / m) * np.sum(A - Y)
+    print(db.shape)
     ### END CODE HERE ###
     
-    cost = np.squeeze(cost
+    cost = np.squeeze(cost)
     
     grads = {"dw": dw,
              "db": db}
     
     return grads, cost
-
 
 
