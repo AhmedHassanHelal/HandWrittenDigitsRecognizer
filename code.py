@@ -157,3 +157,8 @@ legend = plt.legend(loc='upper center', shadow=True)
 frame = legend.get_frame()
 frame.set_facecolor('0.90')
 plt.show()
+
+
+my_image = X_train[:, index]
+my_predicted_image = predict(d["w"], d["b"], my_image)
+print("y = " + str(np.squeeze(my_predicted_image)))
