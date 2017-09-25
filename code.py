@@ -2,7 +2,7 @@ from mnist import MNIST
 import numpy as np
 import random
 
-NUM_DIGItS=10
+NUM_DIGItS = 10
 
 mndata = MNIST('/home/ahmed/MyWorkspace/Hand Writing Digits Recognizer/samples')
 
@@ -11,10 +11,23 @@ images_test, labels_test_orig = mndata.load_testing()
 
 X_train = np.asarray(images_train_orig).T
 Y_ORIG_train = np.asarray(labels_train_orig)
-Y_ORIG_train = Y_ORIG_train.reshape((Y_ORIG_train.shape[0], 1))
+Y_ORIG_train = Y_ORIG_train.reshape((Y_ORIG_train.shape[0], 1)).T
+
+Y_Expected_Train = np.zeros((NUM_DIGItS, Y_ORIG_train.shape[1]))
+
+for i in range(NUM_DIGItS):
+    Y_Expected_Train[i,:] = np.isin(Y_ORIG_train, [i]).astype(int)
+
+
 X_test = np.asarray(images_test).T
 Y_ORIG_test = np.asarray(labels_test_orig)
-Y_ORIG_test = Y_ORIG_test.reshape((Y_ORIG_test.shape[0], 1))
+Y_ORIG_test = Y_ORIG_test.reshape((Y_ORIG_test.shape[0], 1)).T
+
+Y_Expected_Test = np.zeros((NUM_DIGItS, Y_ORIG_test.shape[1]))
+
+for i in range(NUM_DIGItS):
+    Y_Expected_Test[i,:] = np.isin(Y_ORIG_test, [i]).astype(int)
+
 
 m_train = X_train.shape[1]
 
@@ -82,7 +95,6 @@ def propagate(w, b, X, Y):
 
 
 
-
 def optimize(w, b, X, Y, num_iterations, learning_rate, print_cost = False):
     """
     This function optimizes w and b by running a gradient descent algorithm
@@ -142,3 +154,32 @@ def optimize(w, b, X, Y, num_iterations, learning_rate, print_cost = False):
              "db": db}
     
     return params, grads, costs
+
+
+
+
+def predict(w, b, X):
+    '''
+    Predict whether the label is 0 or 1 using learned logistic regression parameters (w, b)
+    
+    Arguments:
+    w -- weights, a numpy array of size (num_px * num_px * 3, 1)
+    b -- bias, a scalar
+    X -- data of size (num_px * num_px * 3, number of examples)
+    
+    Returns:
+    Y_prediction -- a numpy array (vector) containing all predictions (0/1) for the examples in X
+    '''
+    
+    m = X.shape[1]
+    Y_prediction = np.zeros((NUM_DIGItS, m))
+    w = w.reshape(X.shape[0], NUM_DIGItS)
+    
+    # Compute vector "A" predicting the probabilities of a cat being present in the picture
+    ### START CODE HERE ### (≈ 1 line of code)
+    A = sigmoid(np.dot(w.T, X) + b)
+    ### END CODE HERE ###
+    
+    Y_prediction = (np.sign(A-0.5)+1)/2
+    
+    return Y_prediction
