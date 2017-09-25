@@ -56,7 +56,7 @@ def initialize_with_zeros(dim):
 def propagate(w, b, X, Y):
     m = X.shape[1]
     
-    z = np.dot(w.T, X)+b
+    Z = np.dot(w.T, X)+b
     A = sigmoid(Z)
     cost = (- 1 / m) * np.sum(Y * np.log(A) + (1 - Y) * (np.log(1 - A)), axis = 1)
     print(cost.shape)
